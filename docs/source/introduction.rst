@@ -60,3 +60,10 @@ Deploying the App
 Having prepared the simple oracle app, the developer needs to run a local network to test it. There are two prerequisites that should be installed: `Mongo <https://www.mongodb.com/docs/manual/installation/>`_ and `Redis <https://redis.io/docs/getting-started/installation/>`_. After these two have been installed, the following steps should be followed to run the network.
 
 The first step is to clone Muon node’s repository and checkout the testnet branch through:  
+
+.. code-block:: javascript
+
+$ git clone git@github.com:muon-protocol/muon-node-js.git --recurse-submodules
+$ cd muon-node-js
+$ git checkout testnet
+
