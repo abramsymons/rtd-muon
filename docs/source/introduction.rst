@@ -79,7 +79,7 @@ The network should be initialized using a number of nodes. For instance, a netwo
 
     $ npm run devnet-init -- -t=3 -n=4 -infura=<your-infura-project-id>
 
-‍‍‍As many Muon apps need to connect to Ethereum Mainnet and its sidechains, the developer’s Infura project ID should be added as well. The developer should then place the app in the ‍``apps/general/`` folder and run the network with this command: 
+‍‍‍As many Muon apps need to connect to Ethereum Mainnet and its sidechains, the developer’s Infura project ID should be added as well. The developer should then place the app in the ``apps/general/`` folder and run the network with this command: 
 
 .. code-block:: javascript
 
