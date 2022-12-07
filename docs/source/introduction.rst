@@ -52,4 +52,4 @@ Muon apps are currently developed in JS; other programming languages will gradua
       }
     }
 
-A Muon app is a module that exports two functions: `onRequest` and `signParams`. The first fetches data, does any necessary processing and returns any data needed to be fed to the smart contract. The second function lists all the parameters that are to be included in the signed message and their types.
+A Muon app is a module that exports two functions: ``onRequest`` and ``signParams``. The first fetches data, does any necessary processing and returns any data needed to be fed to the smart contract. The second function lists all the parameters that are to be included in the signed message and their types.
