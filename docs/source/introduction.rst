@@ -67,3 +67,8 @@ The first step is to clone Muon node’s repository and checkout the testnet bra
     $ cd muon-node-js
     $ git checkout testnet
 
+The next step is to install required node modules as follows: 
+
+.. code-block:: javascript
+
+    $ npm install
