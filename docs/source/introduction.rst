@@ -100,7 +100,11 @@ Now that the app has been deployed, the developer can query the app and get sign
 
 .. note::
     When the testing is done and the app is about to be deployed on the public networks, the following steps should be observed: 
+    
     - Muon apps repository is forked. 
+    
     - The app is added to the forked repository. 
+    
     - A pull request is submitted to the repository 
+    
     With this process, the app will be reviewed and added to Muon apps.
