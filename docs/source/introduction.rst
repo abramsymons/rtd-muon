@@ -57,6 +57,6 @@ A Muon app is a module that exports two functions: ``onRequest`` and ``signParam
 Deploying the App
 -----------------
 
-Having prepared the simple oracle app, the developer needs to run a local network to test it. There are two prerequisites that should be installed: `Mongo <https://www.mongodb.com/docs/manual/installation/>`_ and `Redis<https://redis.io/docs/getting-started/installation/>`_. After these two have been installed, the following steps should be followed to run the network.
+Having prepared the simple oracle app, the developer needs to run a local network to test it. There are two prerequisites that should be installed: `Mongo <https://www.mongodb.com/docs/manual/installation/>`_ and `Redis <https://redis.io/docs/getting-started/installation/>`_. After these two have been installed, the following steps should be followed to run the network.
 
 The first step is to clone Muon node’s repository and checkout the testnet branch through:  
