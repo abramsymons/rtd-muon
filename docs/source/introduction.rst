@@ -108,3 +108,6 @@ Now that the app has been deployed, the developer can query the app and get sign
     - A pull request is submitted to the repository 
     
     With this process, the app will be reviewed and added to Muon apps.
+
+Verifying Signatures on the Contract 
+------------------------------------
