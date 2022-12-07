@@ -63,7 +63,7 @@ The first step is to clone Muon node’s repository and checkout the testnet bra
 
 .. code-block:: javascript
 
-$ git clone git@github.com:muon-protocol/muon-node-js.git --recurse-submodules
-$ cd muon-node-js
-$ git checkout testnet
+    $ git clone git@github.com:muon-protocol/muon-node-js.git --recurse-submodules
+    $ cd muon-node-js
+    $ git checkout testnet
 
