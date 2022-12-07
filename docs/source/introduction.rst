@@ -20,36 +20,35 @@ Muon apps are currently developed in JS; other programming languages will gradua
 .. code-block:: javascript
 const { axios } = MuonAppUtils
 
-module.exports = {
-  APP_NAME: 'simple_oracle',
+    module.exports = {
+      APP_NAME: 'simple_oracle',
 
-  onRequest: async function(request){
-    let { method } = request
-    switch (method) {
-      case 'eth-price':
-        const response = await axios.get('https://api.coinbase.com/v2/exchange-rates?currency=ETH')
-        return {
-          price: parseInt(response.data['rates']['USD']),
+      onRequest: async function(request){
+        let { method } = request
+        switch (method) {
+          case 'eth-price':
+            const response = await axios.get('https://api.coinbase.com/v2/exchange-rates?currency=ETH')
+            return {
+              price: parseInt(response.data['rates']['USD']),
+            }
+
+          default:
+            throw `Unknown method ${method}`
         }
+      },
 
-      default:
-        throw `Unknown method ${method}`
+      signParams: function(request, result){
+        let { method } = request;
+        let { price } = result;
+        switch (method) {
+          case 'eth-price':
+            return [
+              { type: 'uint256', value: price }
+            ]
+          default:
+            throw `Unknown method ${method}`
+        }
+      }
     }
-  },
-
-  signParams: function(request, result){
-    let { method } = request;
-    let { price } = result;
-    switch (method) {
-      case 'eth-price':
-        return [
-          { type: 'uint256', value: price }
-        ]
-      default:
-        throw `Unknown method ${method}`
-    }
-  }
-}
-```
 
 A Muon app is a module that exports two functions: `onRequest` and `signParams`. The first fetches data, does any necessary processing and returns any data needed to be fed to the smart contract. The second function lists all the parameters that are to be included in the signed message and their types.
