@@ -17,7 +17,7 @@ A Simple Oracle App
 
 Muon apps are currently developed in JS; other programming languages will gradually be added. Here is a sample oracle app whose job is to fetch the price of ETH from Coinbase API.
 
-```
+.. code-block:: javascript
 const { axios } = MuonAppUtils
 
 module.exports = {
