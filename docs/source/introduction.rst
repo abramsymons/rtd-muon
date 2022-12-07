@@ -72,3 +72,29 @@ The next step is to install required node modules as follows:
 .. code-block:: javascript
 
     $ npm install
+
+The network should be initialized using a number of nodes. For instance, a network of 4 nodes  is created with the following command, where a request can be signed with 3 of them. 
+
+.. code-block:: javascript
+
+    $ npm run devnet-init -- -t=3 -n=4 -infura=<your-infura-project-id>
+
+As many Muon apps need to connect to Ethereum Mainnet and its sidechains, the developer’s Infura project ID should be added as well. The developer should then place the app in the ‍apps/general/ folder and run the network with this command: 
+
+‍‍‍.. code-block:: javascript
+
+    $ npm run devnet-run -- -n=3
+
+The first time the app is run, it should be deployed on the network. To do so, use the following commands: 
+
+.. code-block:: javascript
+
+    $ ./node_modules/.bin/ts-node ./src/cmd config set url "http://localhost:8000/v1"
+    $ ./node_modules/.bin/ts-node ./src/cmd app deploy "simple_oracle"
+
+Now that the app has been deployed, the developer can query the app and get signed responses from it. To query the app, curl, for instance, can be use 
+
+.. code-block:: javascript
+
+    $ curl "http://localhost:8000/v1/?app=simple_oracle&method=eth-price"
+
