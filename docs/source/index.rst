@@ -8,5 +8,5 @@ Contents
 
 .. toctree::
 
-   Introduction
-   Structure
+   introduction
+   structure
