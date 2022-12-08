@@ -111,3 +111,64 @@ The Z-score measures how far a data point is away from the mean as a multiple of
 .. code-block:: javascript
 
     z_score = abs(x - mean) / std
+
+This means any prices that are higher than the threshold Z score will be considered as an outlier and excluded from the final average. 
+
+.. code-block:: javascript
+
+    std: function (arr) {
+        let mean = arr.reduce((result, el) => result + el, 0) / arr.length
+        arr = arr.map((k) => (k - mean) ** 2)
+        let sum = arr.reduce((result, el) => result + el, 0)
+        let variance = sum / arr.length
+        return Math.sqrt(variance)
+    },
+
+    removeOutlierZScore: function (prices) {
+        const mean = this.calculateAveragePrice(prices)
+        // calculate std(standard deviation)
+        const std = this.std(prices)
+        if (std == 0) return prices
+
+        // Z score = (price - mean) / std
+        // price is not reliable if Z score > threshold
+        return prices.filter((price) => Math.abs(price - mean) / std < THRESHOLD)
+    },
+
+For outlier detection based on Z-score, the price logarithm is used because price is  logarithmic in nature. Essentially, using the log of prices can better show the viewer the rate of change over time. If prices are considered linearly, price change from 1 to 2 equals price change from 1001 to 1002. In logarithmic viewpoint, however, these two changes are clearly different. 
+
+The process of removing outliers is done twice. Calculating the average including outliers makes the average and the resulting standard deviation biased. Repeating the outlier detection process after cleaning the data set by removing any obviously outlying prices in the first run assures us that more subtle outliers can be detected as well. Although this approach may cause the removal of prices that are not the result of price manipulation, it drastically reduces the chances of not detecting a manipulated price.  
+
+.. code-block:: javascript
+
+    removeOutlier: function (prices) {
+        const logPrices = []
+        prices.forEach((price) => {
+            logPrices.push(Math.log(price));
+        })
+        let logOutlierRemoved = this.removeOutlierZScore(logPrices)
+
+Now we have all the necessary data to calculate the average. To make the process simpler, only the price of ``token0`` in terms of ``token1`` has been calculated so far. However, each pair is made of two tokens, each of which has a price in terms of the other and is the other’s reverse. Mathematically, the average of the reverse of a list of numbers does not equal the reverse of their average. That is why we need to calculate all the reverses and calculate their average to obtain the price average of ``token1`` in terms of ``token0``.
+
+.. code-block:: javascript
+
+    calculateAveragePrice: function (prices, returnReverse) {
+        let fn = function (result, el) {
+            return returnReverse ? { price0: result.price0.add(el), price1: result.price1.add(Q112.mul(Q112).div(el)) } : result + el
+        }
+        const sumPrice = prices.reduce(fn, returnReverse ? { price0: new BN(0), price1: new BN(0) } : 0)
+        const averagePrice = returnReverse ? { price0: sumPrice.price0.div(new BN(prices.length)), price1: sumPrice.price1.div(new BN(prices.length)) } : sumPrice / prices.length
+        return averagePrice
+    },
+
+
+
+        logOutlierRemoved = this.removeOutlierZScore(logOutlierRemoved)
+
+        const outlierRemoved = []
+        const removed = []
+        prices.forEach((price, index) => logOutlierRemoved.includes(logPrices[index]) ? outlierRemoved.push(price) : removed.push(price.toString()))
+
+        return { outlierRemoved, removed }
+    },
+
