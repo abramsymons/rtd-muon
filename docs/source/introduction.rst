@@ -114,7 +114,7 @@ Verifying Signatures on the Contract
 
 The TSS which Muon network generates is of Schnorr type and there are no built-in functions on Ethereum for its verification. There are, however, libraries that help verify the signature with a small amount of gas fee. Muon has provided such a library for dApps using Muon. These should import it into their smart contracts, inherit the ``MuonClient`` contract available `here <https://github.com/muon-protocol/muon-contracts/blob/v4-muon-as-a-lib/contracts/MuonClient.sol>`_, and use the ``muonVerify`` function to verify the signature. Here is a sample:
 
-.. block-code:: javascript
+.. code-block:: javascript
 
  // SPDX-License-Identifier: MIT
     pragma solidity ^0.8.0;
@@ -149,3 +149,37 @@ The TSS which Muon network generates is of Schnorr type and there are no built-i
             require(verified, "TSS not verified");
         }    
     }
+
+In addition to the TSS layer, Muon network has another security layer called Shield Nodes. A shield node makes use of Elliptic Curve Digital Signature Algorithm (ECDSA) signature which can be verified by built-in functions on Ethereum.
+
+  .. code-block:: javascript
+  
+    ...
+    contract SampleApp is MuonClient {
+
+        address shieldNode = msg.sender; // by default
+        ...
+        function verifyTSSAndShieldNode(
+            uint256 price,
+            bytes calldata reqId,
+            SchnorrSign calldata sign,
+            bytes calldata shieldNodeSign
+        ) public {
+            bytes32 hash = keccak256(
+                abi.encodePacked(
+                    muonAppId,
+                    reqId,
+                    price
+                )
+            );
+            bool verified = muonVerify(reqId, uint256(hash), sign, muonPublicKey);
+            require(verified, "TSS not verified");
+
+            hash = hash.toEthSignedMessageHash();
+            address signer = hash.recover(shieldNodeSign);
+            require(signer == shieldNode, "Shield node is not valid");
+
+        }
+    }
+
+This sample illustrates how shield node signature can be verified in addition to threshold signature in one function call. 
