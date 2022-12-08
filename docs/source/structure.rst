@@ -89,3 +89,21 @@ For certain use-cases such as getting token prices, the requested data from the 
 To address this problem, Muon’s TSS network makes use of the following data-obtaining procedure. The node that receives the data request from the client, the gateway node, obtains required data, and then shares it with others in the TSS group. The other nodes obtain the required data and compare it with the data from the gateway node. If their obtained data is within a predefined range of the gateway data, they sign the data from the gateway node, not their own data. Finally, the gateway node aggregates the signatures and generates the threshold signature. This way, the threshold signature is on one set of data that was initially obtained by the gateway node.
 
 For such applications, signParams should include the data provided by the gateway node instead of its own price if its own data is marginally different from that of the gateway. Otherwise, it rejects the request. So `signParams` should be updated as following: 
+
+.. code-block:: javascript
+
+    const gatwayPrice = request.data?.result?.price || price;
+    if (100 * Math.abs(price - gatewayPrice) / price > 0.5) {
+      throw 'invalid price'
+    }
+    return [
+      { type: 'uint32', value: gatewayPrice },
+      { type: 'string', value: token },
+      { type: 'string', value: unit },
+    ]
+
+The `request.data?.result?.price` is `undefined` when it is evaluated on the gateway node; if not, its value is that of the gateway node’s. The price from the gateway node is verified only if the margin is lower than 0.5%.
+
+Another essential piece of data that should be added to the returned list of `signParams` in some applications is the request’s timestamp. If the timestamp is not included for a token price, for instance, an old price signed a long time ago may be fed into the dApp. The points explained above are also true about timestamps; that is, the times when different nodes receive requests may differ slightly. So all nodes need to sign the gateway node’s time. Gateway time can be accessed via `request.data.timestamp`.
+
+Timestamp deviation does not need to be manually verified in the code the way that is done for price. When a node receives a request from the gateway node, it checks request.data.timestamp whether the time gap is not more than 30 seconds. Otherwise, it rejects the request. So it is sufficient to include request.data.timestamp in the returned list of signParams the following way.  
