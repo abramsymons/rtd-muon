@@ -9,8 +9,9 @@ This section describes how a price feed app is developed using Muon. It is made 
   2- we explain how to use the app from section one to obtain a token’s price from a route made of pairs that ends with a stablecoin as well as calculating a Volume Weighted Average Price (VWAP) of routes in different exchanges on different chains 
 
 
+**************************
 Calculating TWAP of a Pair
-==========================
+**************************
 
 Our off-chain implementation of TWAP has the following benefits over the original on-chain TWAP of Uniswap.
   - It detects and removes outlier prices before calculating averages to prevent price manipulations through applying a sharp rise/fall in the price for a short duration.
@@ -20,7 +21,7 @@ Our off-chain implementation of TWAP has the following benefits over the origina
 Here is the technical details of how the app is implemented:
 
 Obtaining Price Changes
------------------------
+=======================
 
 To calculate TWAP, a time period is defined with a source and a destination time. Also, the token prices for the defined period should be obtained from each block. It seems that the app needs to call ``getReserves`` for each block, calculate the price for the block by dividing ``_reserve1`` to ``_reserve0``, and calculate the average of all the prices. 
 
