@@ -28,6 +28,8 @@ The simple oracle app mentioned in section 1b returns the price of ETH in terms 
     
 In `onRequest`, parameters can be received and used in the following way:
 
+.. code-block:: javascript
+    
     onRequest: async function(request){
         let {
           method,
