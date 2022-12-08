@@ -1,9 +1,10 @@
-*************************
+#########################
 Introduction to Muon Apps
-*************************
+#########################
 
+*******************
 What is a Muon App?
-===================
+*******************
 
 Apps in the decentralized environment, called dApps, are made up of a smart contract and a client, that is, a frontend user interface. There are, however, dapps that need an extra component to provide data from off-chain sources, i.e. an oracle. DApps for different purposes have different oracles that read and process data from sources and return signed responses. 
 
@@ -13,8 +14,9 @@ However, it is not that simple. Data feeds provided by oracles are vulnerable to
 
 As a viable alternative, dApps can focus on the development of the oracle function as a  Muon app and depend on the multi-layer security scheme that Muon has devised. In simple words, a Muon app refers to an oracle app that is deployed and runs on the Muon network to fetch and process data and generate an output that can be fed to a smart contract reliably. 
 
+*******************
 A Simple Oracle App
-===================
+*******************
 
 Muon apps are currently developed in JS; other programming languages will gradually be added. Here is a sample oracle app whose job is to fetch the price of ETH from Coinbase API.
 
@@ -55,8 +57,9 @@ Muon apps are currently developed in JS; other programming languages will gradua
 
 A Muon app is a module that exports two functions: ``onRequest`` and ``signParams``. The first fetches data, does any necessary processing and returns any data needed to be fed to the smart contract. The second function lists all the parameters that are to be included in the signed message and their types.
 
+*****************
 Deploying the App
-=================
+*****************
 
 Having prepared the simple oracle app, the developer needs to run a local network to test it. There are two prerequisites that should be installed: `Mongo <https://www.mongodb.com/docs/manual/installation/>`_ and `Redis <https://redis.io/docs/getting-started/installation/>`_. After these two have been installed, the following steps should be followed to run the network.
 
@@ -110,8 +113,9 @@ Now that the app has been deployed, the developer can query the app and get sign
     
     With this process, the app will be reviewed and added to Muon apps.
 
+************************************
 Verifying Signatures on the Contract 
-====================================
+************************************
 
 The TSS which Muon network generates is of Schnorr type and there are no built-in functions on Ethereum for its verification. There are, however, libraries that help verify the signature with a small amount of gas fee. Muon has provided such a library for dApps using Muon. These should import it into their smart contracts, inherit the ``MuonClient`` contract available `here <https://github.com/muon-protocol/muon-contracts/blob/v4-muon-as-a-lib/contracts/MuonClient.sol>`_, and use the ``muonVerify`` function to verify the signature. Here is a sample:
 
