@@ -159,7 +159,7 @@ In addition to the TSS layer, Muon network has another security layer called Shi
 
   .. code-block:: javascript
   
-    ...
+    // ...
     contract SampleApp is MuonClient {
 
         address shieldNode = msg.sender; // by default
