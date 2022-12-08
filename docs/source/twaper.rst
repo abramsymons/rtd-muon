@@ -98,3 +98,13 @@ Each pair is made up of two tokens. To calculate the price of ``token0`` in term
         return price0
     },
 
+Detecting Outliers
+==================
+
+Before calculating the average, prices that are potentially the result of manipulation should be detected and removed from the list. This is technically called outlier detection. At present, a simple algorithm called Z-score is used for outlier detection. 
+
+The Z-score measures how far a data point is away from the mean as a multiple of the standard deviation (std). In simple words, it indicates how many standard deviations an element is from the mean, so 
+
+.. code-block:: javascript
+
+    z_score = abs(x - mean) / std
