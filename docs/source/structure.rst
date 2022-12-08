@@ -1,8 +1,13 @@
-# Structure of a Muon App #
+#######################
+Structure of a Muon App
+#######################
 
-## Functions ##
+*********
+Functions
+*********
 
-### onRequest ###
+onRequest
+=========
 
 It is the most important function that every app should implement. This function receives the request as an argument, fetches required data from external sources, does any necessary processing and returns any data needed to be fed to the smart contract. `request` has different attributes. 
 
@@ -46,7 +51,8 @@ In ``onRequest``, parameters can be received and used in the following way:
         }
     }
 
-### signParams ###
+signParams
+==========
 
 This is another function that all Muon apps should implement. This method returns a list of all the parameters that are to be included in the signed message and their types. The type of each element defines how each should be encoded and included in the signed message. The available types are ``int256``, ``uint256``, ``bytes256``, ``address``, and ``string``. The first three types support size variations 8, 16, 32, 64, 128 as well. Muon core packs ``appId``, ``requestId`` and the current list, and uses its hash as the message that should be signed.
 
@@ -77,7 +83,8 @@ If the simple oracle app is to be expanded to contain the token and unit paramet
       }
     }
 
-#### How to Use Gateway Data ####
+How to Use Gateway Data
+-----------------------
 
 For certain use-cases such as getting token prices, the requested data from the TSS network fluctuates momentarily. Obtaining the token price from Coinbase API in the simple oracle app is one such case. The price may fluctuate numerous times in one or two seconds, so the obtained data from different nodes in the TSS network may differ slightly. However, to generate the threshold signature, all nodes should sign exactly the same data.  
 
@@ -112,8 +119,9 @@ Timestamp deviation does not need to be manually verified in the code the way th
       { type: 'uint32', value: request.data.timestamp },
     ]
 
+******
 Memory
-======
+******
 
 Although the Muon oracle network is stateless, there are applications that need TTL-based caching. Suppose the simple oracle app is to limit the number of requests to Coinbase API and cache the response for a short period, for example 5 seconds. The ``readLocalMem`` and ``writeLocalMem`` functions as follows:
 
@@ -143,8 +151,9 @@ One of the use-cases of these functions is the implementation of a locking syste
     if (alreadyLocked) throw user locked;
     // the code block requires acquiring the lock
 
+*********
 Utilities
-=========
+*********
 
 Developers can use ``MuonAppUtils`` to access available utilities for developing Muon apps.
 
