@@ -106,4 +106,115 @@ The ``request.data?.result?.price`` is ``undefined`` when it is evaluated on the
 
 Another essential piece of data that should be added to the returned list of ``signParams`` in some applications is the request’s timestamp. If the timestamp is not included for a token price, for instance, an old price signed a long time ago may be fed into the dApp. The points explained above are also true about timestamps; that is, the times when different nodes receive requests may differ slightly. So all nodes need to sign the gateway node’s time. Gateway time can be accessed via ``request.data.timestamp``.
 
-Timestamp deviation does not need to be manually verified in the code the way that is done for price. When a node receives a request from the gateway node, it checks request.data.timestamp whether the time gap is not more than 30 seconds. Otherwise, it rejects the request. So it is sufficient to include ``request.data.timestamp`` in the returned list of ``signParams`` the following way.  
+Timestamp deviation does not need to be manually verified in the code the way that is done for price. When a node receives a request from the gateway node, it checks ``request.data.timestamp`` whether the time gap is not more than 30 seconds. Otherwise, it rejects the request. So it is sufficient to include ``request.data.timestamp`` in the returned list of ``signParams`` the following way.  
+
+.. code-block:: javascript
+
+    return [
+      { type: 'uint32', value: gatewayPrice },
+      { type: 'string', value: token },
+      { type: 'string', value: unit },
+      { type: 'uint32', value: request.data.timestamp },
+    ]
+
+Memory
+======
+
+Although the Muon oracle network is stateless, there are applications that need TTL-based caching. Suppose the simple oracle app is to limit the number of requests to Coinbase API and cache the response for a short period, for example 5 seconds. The ``readLocalMem`` and ``writeLocalMem`` functions as follows:
+
+.. code-block:: javascript
+
+    let data = await this.readLocalMem(`price-${token}`)
+    if (!data) {
+      const response = await axios.get(`https://api.coinbase.com/v2/exchange-rates?currency=${token}`)  
+      data = JSON.stringify(response.data)
+      await this.writeLocalMem(`price-${token}`, [{type: "string", value: data}], 5)
+    }
+    data = JSON.parse(data)
+    return {
+      price: parseInt(data['rates'][unit]),
+    }
+
+One of the use-cases of these functions is the implementation of a locking system. To do so, reading and writing cannot be run separately because if there are two concurrent requests, they may both acquire the lock simultaneously. To solve this problem, ``{ getset: true }`` can be passed to ``writeLocalMem``. Doing so, the ``writeLocalMem`` first reads the value prior to its writing and returns it. This assures that reading and writing occur in an atomic way.
+
+.. code-block:: javascript
+
+    const alreadyLocked = await this.writeLocalMem(
+    `lock-${user}`,
+      [{ type: "bool", value: true }],
+      5,
+      { getset: true }
+    );
+    if (alreadyLocked) throw user locked;
+    // the code block requires acquiring the lock
+
+Utilities
+=========
+
+Developers can use ``MuonAppUtils`` to access available utilities for developing Muon apps.
+
+.. code-block:: javascript
+
+    const { axios } = MuonAppUtils
+
+Here is the list of available utilities: 
+
+.. code-block:: javascript
+
+    ‍const axios = require('axios')
+    const Web3 = require('web3')
+    const tron = require('../utils/tron')
+    const { flatten, groupBy } = require('lodash')
+    const { BigNumber } = require('bignumber.js')
+
+    const { toBaseUnit } = require('../utils/crypto')
+    const { timeout, floatToBN } = require('../utils/helpers')
+    const util = require('ethereumjs-util')
+    const ws = require('ws')
+    const ethSigUtil = require('eth-sig-util')
+    const {
+      getBlock: ethGetBlock,
+      getBlockNumber: ethGetBlockNumber,
+      getPastEvents: ethGetPastEvents,
+      read: ethRead,
+      call: ethCall,
+      getTokenInfo: ethGetTokenInfo,
+      getNftInfo: ethGetNftInfo,
+      hashCallOutput: ethHashCallOutput
+    } = require('../utils/eth')
+
+    const soliditySha3 = require('../utils/soliditySha3');
+
+    const { multiCall } = require('../utils/multicall')
+    const { BNSqrt } = require('../utils/bn-sqrt')
+
+    global.MuonAppUtils = {
+      axios,
+      Web3,
+      flatten,
+      groupBy,
+      tron,
+      ws,
+      timeout,
+      BN: Web3.utils.BN,
+      BigNumber,
+      toBN: Web3.utils.toBN,
+      floatToBN,
+      multiCall,
+      ethGetBlock,
+      ethGetBlockNumber,
+      ethGetPastEvents,
+      ethRead,
+      ethCall,
+      ethGetTokenInfo,
+      ethGetNftInfo,
+      ethHashCallOutput,
+      toBaseUnit,
+      soliditySha3,
+      ecRecover: util.ecrecover,
+      recoverTypedSignature: ethSigUtil.recoverTypedSignature,
+      recoverTypedMessage: ethSigUtil.recoverTypedMessage,
+      BNSqrt: BNSqrt
+    }
+
+
