@@ -1,6 +1,10 @@
 #######################
-TWAPER (Price Feed App)
+Sample Muon Apps
 #######################
+
+***********************
+TWAPER (Price Feed App)
+***********************
 
 This section describes how a price feed app is developed using Muon. It is made up of two sections: 
 
