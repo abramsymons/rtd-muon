@@ -19,7 +19,7 @@ It is the most important function that every app should implement. This function
         ...
     }
 
-The first one is the `method` that the user has called. Muon apps can have different methods, each of which should be separately handled in the `onRequest` function. The second one is `data` that, in turn, has an attribute called `params` which includes the parameters that are to be passed to the called `method`.
+The first one is the ``method`` that the user has called. Muon apps can have different methods, each of which should be separately handled in the ``onRequest`` function. The second one is ``data`` that, in turn, has an attribute called ``params`` which includes the parameters that are to be passed to the called `method`.
 
 The simple oracle app mentioned in section 1b returns the price of ETH in terms of USD. If we are to expand the usage of the app to be able to return the price of any given token in terms any unit supported by Coinbase API, `token` and `unit` should be passed to the app the following way:  
 
@@ -27,7 +27,7 @@ The simple oracle app mentioned in section 1b returns the price of ETH in terms 
 
     /?app=simple_oracle&method=price&params[token]=ETH&params[unit]=USD 
     
-In `onRequest`, parameters can be received and used in the following way:
+In ``onRequest``, parameters can be received and used in the following way:
 
 .. code-block:: javascript
     
@@ -52,7 +52,7 @@ In `onRequest`, parameters can be received and used in the following way:
 signParams
 ------------
 
-This is another function that all Muon apps should implement. This method returns a list of all the parameters that are to be included in the signed message and their types. The type of each element defines how each should be encoded and included in the signed message. The available types are `int256`, `uint256`, `bytes256`, `address`, and `string`. The first three types support size variations 8, 16, 32, 64, 128 as well. Muon core packs `appId`, `requestId` and the current list, and uses its hash as the message that should be signed.
+This is another function that all Muon apps should implement. This method returns a list of all the parameters that are to be included in the signed message and their types. The type of each element defines how each should be encoded and included in the signed message. The available types are ``int256``, ``uint256``, ``bytes256``, ``address``, and ``string``. The first three types support size variations 8, 16, 32, 64, 128 as well. Muon core packs ``appId``, ``requestId`` and the current list, and uses its hash as the message that should be signed.
 
 .. warning::
 
@@ -88,7 +88,7 @@ For certain use-cases such as getting token prices, the requested data from the 
 
 To address this problem, Muon’s TSS network makes use of the following data-obtaining procedure. The node that receives the data request from the client, the gateway node, obtains required data, and then shares it with others in the TSS group. The other nodes obtain the required data and compare it with the data from the gateway node. If their obtained data is within a predefined range of the gateway data, they sign the data from the gateway node, not their own data. Finally, the gateway node aggregates the signatures and generates the threshold signature. This way, the threshold signature is on one set of data that was initially obtained by the gateway node.
 
-For such applications, signParams should include the data provided by the gateway node instead of its own price if its own data is marginally different from that of the gateway. Otherwise, it rejects the request. So `signParams` should be updated as following: 
+For such applications, signParams should include the data provided by the gateway node instead of its own price if its own data is marginally different from that of the gateway. Otherwise, it rejects the request. So ``signParams`` should be updated as following: 
 
 .. code-block:: javascript
 
