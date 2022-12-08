@@ -219,6 +219,3 @@ Here is the list of available utilities:
       recoverTypedMessage: ethSigUtil.recoverTypedMessage,
       BNSqrt: BNSqrt
     }
-
-
-hello
