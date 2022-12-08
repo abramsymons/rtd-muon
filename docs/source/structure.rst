@@ -4,7 +4,7 @@ Structure of a Muon App
 Functions
 =========
 
- `onRequest`
+onRequest
 ----------
 
 It is the most important function that every app should implement. This function receives the request as an argument, fetches required data from external sources, does any necessary processing and returns any data needed to be fed to the smart contract. `request` has different attributes. 
@@ -49,7 +49,7 @@ In `onRequest`, parameters can be received and used in the following way:
         }
     }
 
- `signParams`
+signParams
 ------------
 
 This is another function that all Muon apps should implement. This method returns a list of all the parameters that are to be included in the signed message and their types. The type of each element defines how each should be encoded and included in the signed message. The available types are `int256`, `uint256`, `bytes256`, `address`, and `string`. The first three types support size variations 8, 16, 32, 64, 128 as well. Muon core packs `appId`, `requestId` and the current list, and uses its hash as the message that should be signed.
@@ -58,3 +58,34 @@ This is another function that all Muon apps should implement. This method return
 
 To ensure that the signed and verified response has accurately covered the requested data, the parameters passed to the app should also be included in the returned value of signParams in addition to the result. Otherwise, the signature queried from the app with certain parameters might be abused and fed to the dApp contract with different ones. If the app has different methods, the method name should be included as well.
 
+If the simple oracle app is to be expanded to contain the token and unit parameters, the signParams should be updated as follows: 
+
+.. code-block:: javascript
+
+    signParams: function(request, result){
+      let {
+        method,
+        data: { params }
+      } = request
+      let { token, unit } = params
+      let { price } = result;
+      switch (method) {
+        case 'price':
+          return [
+            { type: 'uint32', value: price },
+            { type: 'string', value: token },
+            { type: 'string', value: unit },
+          ]
+        default:
+          throw `Unknown method ${method}`
+      }
+    }
+
+How to Use Gateway Data
+-----------------------
+
+For certain use-cases such as getting token prices, the requested data from the TSS network fluctuates momentarily. Obtaining the token price from Coinbase API in the simple oracle app is one such case. The price may fluctuate numerous times in one or two seconds, so the obtained data from different nodes in the TSS network may differ slightly. However, to generate the threshold signature, all nodes should sign exactly the same data.  
+
+To address this problem, Muon’s TSS network makes use of the following data-obtaining procedure. The node that receives the data request from the client, the gateway node, obtains required data, and then shares it with others in the TSS group. The other nodes obtain the required data and compare it with the data from the gateway node. If their obtained data is within a predefined range of the gateway data, they sign the data from the gateway node, not their own data. Finally, the gateway node aggregates the signatures and generates the threshold signature. This way, the threshold signature is on one set of data that was initially obtained by the gateway node.
+
+For such applications, signParams should include the data provided by the gateway node instead of its own price if its own data is marginally different from that of the gateway. Otherwise, it rejects the request. So `signParams` should be updated as following: 
