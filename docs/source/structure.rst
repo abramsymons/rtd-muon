@@ -48,3 +48,11 @@ In `onRequest`, parameters can be received and used in the following way:
         }
     }
 
+`signParams`
+
+This is another function that all Muon apps should implement. This method returns a list of all the parameters that are to be included in the signed message and their types. The type of each element defines how each should be encoded and included in the signed message. The available types are `int256`, `uint256`, `bytes256`, `address`, and `string`. The first three types support size variations 8, 16, 32, 64, 128 as well. Muon core packs `appId`, `requestId` and the current list, and uses its hash as the message that should be signed.
+
+.. warning::
+
+To ensure that the signed and verified response has accurately covered the requested data, the parameters passed to the app should also be included in the returned value of signParams in addition to the result. Otherwise, the signature queried from the app with certain parameters might be abused and fed to the dApp contract with different ones. If the app has different methods, the method name should be included as well.
+
