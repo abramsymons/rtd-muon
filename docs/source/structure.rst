@@ -164,7 +164,7 @@ Here is the list of available utilities:
 
 .. code-block:: javascript
 
-    ‍const axios = require('axios')
+    const axios = require('axios')
     const Web3 = require('web3')
     const tron = require('../utils/tron')
     const { flatten, groupBy } = require('lodash')
@@ -219,5 +219,4 @@ Here is the list of available utilities:
       recoverTypedMessage: ethSigUtil.recoverTypedMessage,
       BNSqrt: BNSqrt
     }
-
 
