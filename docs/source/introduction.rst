@@ -157,7 +157,7 @@ The TSS which Muon network generates is of Schnorr type and there are no built-i
 
 In addition to the TSS layer, Muon network has another security layer called Shield Nodes. A shield node makes use of Elliptic Curve Digital Signature Algorithm (ECDSA) signature which can be verified by built-in functions on Ethereum.
 
-  .. code-block:: javascript
+.. code-block:: javascript
   
     // ...
     contract SampleApp is MuonClient {
