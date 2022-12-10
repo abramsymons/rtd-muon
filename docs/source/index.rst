@@ -10,4 +10,4 @@ Contents
 
    introduction
    structure
-   samples
+   sampleapps
