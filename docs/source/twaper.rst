@@ -13,6 +13,7 @@ Calculating TWAP of a Pair
 ==========================
 
 Our off-chain implementation of TWAP has the following benefits over the original on-chain TWAP of Uniswap.
+
   - It detects and removes outlier prices before calculating averages to prevent price manipulations through applying a sharp rise/fall in the price for a short duration.
   - In order to reject unexpected price changes, it applies a fuse mechanism that stops the system when a short duration average shows a large price volatility compared to a longer one.
   - It does not require periodic transactions to register checkpoints on-chain which are costly and hard to maintain.
