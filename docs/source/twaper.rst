@@ -233,7 +233,7 @@ In this doc, only the original Uniswap implementation is explained. To calculate
 
 Here is the method by which Uniswap calculates time-weighted average: Each time the price changes, it multiplies the previous price by the time period during which that price is valid as the weight of the price. The summation of the results are accumulated in the ``priceCumulativeLast``  which is divided by the total time period resulting in the time-weighted average. The following diagram illustrates how this process works. To get more information, see `here <https://docs.uniswap.org/protocol/V2/concepts/core-concepts/oracles>`_.
 
-![Price data](https://user-images.githubusercontent.com/120013844/206843054-d6a7a9b6-fe73-463e-80fe-c41a54a53872.png)
+![image](https://user-images.githubusercontent.com/120013844/206843054-d6a7a9b6-fe73-463e-80fe-c41a54a53872.png)
 
 If we are to calculate TWAP for a specified time period, for instance the last 24 hours, it seems that the difference between ``priceCumulativeLast`` for the current and starting blocks should be divided by 24 hours. In reality, however, the ``priceCumulativeLast`` is only updated with each swap, so when this variable is queried for a block, its value may belong to a few blocks earlier, that is, the block when a swap took place. To obtain the accurate value of the variable for a block, the block price should be multiplied by the time period between the last swap and block, and the result should be added to the value of ``priceCumulativeLast`` from the last swap.
 
