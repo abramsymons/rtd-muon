@@ -253,7 +253,7 @@ Now that the accurate value of ``priceCumulativeLast`` is calculated for the cur
 
 .. code-block:: javascript
 
-const { price0CumulativeLast, price1CumulativeLast } = this.updatePriceCumulativeLasts(_price0CumulativeLast, _price1CumulativeLast, toReserves, to.timestamp)
+    const { price0CumulativeLast, price1CumulativeLast } = this.updatePriceCumulativeLasts(_price0CumulativeLast, _price1CumulativeLast, toReserves, to.timestamp)
     const { price0CumulativeLast: seedPrice0CumulativeLast, price1CumulativeLast: seedPrice1CumulativeLast } = this.updatePriceCumulativeLasts(_seedPrice0CumulativeLast, _seedPrice1CumulativeLast, seedReserves, seed.timestamp)
 
     const period = new BN(to.timestamp).sub(new BN(seed.timestamp)).abs()
@@ -263,6 +263,7 @@ const { price0CumulativeLast, price1CumulativeLast } = this.updatePriceCumulativ
         price1: new BN(price1CumulativeLast).sub(new BN(seedPrice1CumulativeLast)).div(period),
         blockNumber: seedBlock
     }
+
 
     const { price0CumulativeLast, price1CumulativeLast } = this.updatePriceCumulativeLasts(_price0CumulativeLast, _price1CumulativeLast, toReserves, to.timestamp)
     const { price0CumulativeLast: seedPrice0CumulativeLast, price1CumulativeLast: seedPrice1CumulativeLast } = this.updatePriceCumulativeLasts(_seedPrice0CumulativeLast, _seedPrice1CumulativeLast, seedReserves, seed.timestamp)
