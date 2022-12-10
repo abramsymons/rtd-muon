@@ -7,7 +7,13 @@ Contents
 --------
 
 .. toctree::
+   :caption: Basics
 
    introduction
    structure
-   sampleapps
+   
+.. toctree::
+   :caption: Samples
+   
+   twaper
+  
