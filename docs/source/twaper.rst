@@ -1,6 +1,6 @@
-***********************
+#######################
 TWAPER (Price Feed App)
-***********************
+#######################
 
 This section describes how a price feed app is developed using Muon. It is made up of two sections: 
 
@@ -9,8 +9,9 @@ This section describes how a price feed app is developed using Muon. It is made 
   2- we explain how to use the app from section one to obtain a token’s price from a route made of pairs that ends with a stablecoin as well as calculating a Volume Weighted Average Price (VWAP) of routes in different exchanges on different chains 
 
 
+**************************
 Calculating TWAP of a Pair
-==========================
+**************************
 
 Our off-chain implementation of TWAP has the following benefits over the original on-chain TWAP of Uniswap.
 
@@ -21,7 +22,7 @@ Our off-chain implementation of TWAP has the following benefits over the origina
 Here is the technical details of how the app is implemented:
 
 Obtaining Price Changes
------------------------
+=======================
 
 To calculate TWAP, a time period is defined with a source and a destination time. Also, the token prices for the defined period should be obtained from each block. It seems that the app needs to call ``getReserves`` for each block, calculate the price for the block by dividing ``_reserve1`` to ``_reserve0``, and calculate the average of all the prices. 
 
@@ -51,7 +52,7 @@ When there is more than one change in a block’s reserves, only the final shoul
     },
 
 Listing the Price for Each Block
---------------------------------
+================================
 
 Now there is a list of all the blocks in which reserves have changed and the values of the reserves in those blocks for the defined time period. To calculate the TWAP, a list of prices is needed that shows the final price in each block. To generate this list, we require the initial reserve state in the seed block in addition to the list of reserves values. 
 
@@ -99,7 +100,7 @@ Each pair is made up of two tokens. To calculate the price of ``token0`` in term
     },
 
 Detecting Outliers
-------------------
+==================
 
 Before calculating the average, prices that are potentially the result of manipulation should be detected and removed from the list. This is technically called outlier detection. At present, a simple algorithm called Z-score is used for outlier detection. 
 
@@ -168,7 +169,7 @@ Now we have all the necessary data to calculate the average. To make the process
     },
 
 Implementing Fuse Mechanism
----------------------------
+===========================
 
 Having removed the outliers, the short-term average is generated. At this stage, a fuse mechanism is implemented, through which the short-term average is compared with a longer-term average, for instance an 24-hour average, and stops the system if the result of the comparison shows a large difference.
 
@@ -279,7 +280,7 @@ Now that the accurate value of ``priceCumulativeLast`` is calculated for the cur
     }
 
 Obtaining the Pair Price
-------------------------
+========================
 
 All the procedures explained above in a step-by-step manner can now be reviewed in the implementation of  ``calculatePairPrice`` function. 
 
