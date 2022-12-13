@@ -74,3 +74,46 @@ Now there is a list of all the blocks in which reserves have changed and the val
 	    return { price0: price0, blockNumber: seedBlockNumber }
 	},
   
+At this stage, the initial state and list of reserves values are available, so the price list can be generated. 
+
+.. code-block:: javascript
+
+	createPrices: function (seed, syncEventsMap, blocksToSeed) {
+	    let prices = [seed.price0]
+	    let price = seed.price0
+	    // fill prices and consider a price for each block between seed and current block
+	    for (let blockNumber = seed.blockNumber + 1; blockNumber <= seed.blockNumber + blocksToSeed; blockNumber++) {
+	        // use block event price if there is an event for the block
+	        // otherwise use last event price
+	        if (syncEventsMap[blockNumber]) {
+	            const { reserve0, reserve1 } = syncEventsMap[blockNumber].returnValues
+	            price = this.calculateInstantPrice(reserve0, reserve1)
+	        }
+	        prices.push(price)
+	    }
+	    return prices
+	},
+
+Each pair is made up of two tokens. To calculate the price of ``token0`` in terms of ``token1`` from the reserves, ``reserve1`` should be divided by ``reserve0``. As there are no floating point numbers in Solidity, and price may be a floating point number, a quotient named ``Q112`` is used to retain the precision of the price by multiplying it by ``2^112``. 
+
+.. code-block:: javascript
+
+	calculateInstantPrice: function (reserve0, reserve1) {
+	    // multiply reserveA into Q112 for precision in division 
+	    // reserveA * (2 ** 112) / reserverB
+	    const price0 = new BN(reserve1).mul(Q112).div(new BN(reserve0))
+	    return price0
+	},
+
+Detecting Outliers
+==================
+
+Before calculating the average, prices that are potentially the result of manipulation should be detected and removed from the list. This is technically called *outlier* detection. At present, a simple algorithm called *Z-score* is used for outlier detection. 
+
+The Z-score measures how far a data point is away from the mean as a multiple of the standard deviation (std). In simple words, it indicates how many standard deviations an element is from the mean, so 
+ 
+.. code-block:: javascript
+
+    z_score = abs(x - mean) / std
+
+This means any price with a Z-score higher than the threshold will be considered an outlier and excluded from the final average. 
