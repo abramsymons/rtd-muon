@@ -174,5 +174,73 @@ Now we have all the necessary data to calculate the average. To make the process
 	    return averagePrice
 	},
 
+Applying Fuse Mechanism
+=======================
 
+Having removed the outliers, the short-term average is generated. At this stage, a fuse mechanism is implemented, through which the short-term average is compared with a longer-term average that acts as a fuse price. If the result of the comparison shows a large difference, the fuse mechanism stops the system. 
+
+The fact that we make use of different methods for the calculation of short and long-term averages heightens the app’s reliability; if there is a bug in one of the methods or an attack that influences one of them, the other can cover it. 
+
+.. code-block:: javascript
+
+	checkFusePrice: async function (chainId, pairAddress, price, fusePriceTolerance, blocksToFuse, toBlock, abiStyle) {
+	    const w3 = networksWeb3[chainId]
+	    const seedBlock = toBlock - blocksToFuse
+
+	    const fusePrice = await this.getFusePrice(w3, pairAddress, toBlock, seedBlock, abiStyle)
+	    if (fusePrice.price0.eq(new BN(0)))
+	        return {
+	            isOk0: true,
+	            isOk1: true,
+	            priceDiffPercentage0: new BN(0),
+	            priceDiffPercentage1: new BN(0),
+	            block: fusePrice.blockNumber
+	        }
+	    const checkResult0 = this.isPriceToleranceOk(price.price0, fusePrice.price0, fusePriceTolerance)
+	    const checkResult1 = this.isPriceToleranceOk(price.price1, Q112.mul(Q112).div(fusePrice.price0), fusePriceTolerance)
+
+	    return {
+	        isOk0: checkResult0.isOk,
+	        isOk1: checkResult1.isOk,
+	        priceDiffPercentage0: checkResult0.priceDiffPercentage,
+	        priceDiffPercentage1: checkResult1.priceDiffPercentage,
+	        block: fusePrice.blockNumber
+	    }
+	},
+	
+Calculating Fuse Price
+----------------------
+
+To calculate the long-term average needed for the fuse mechanism, we use the off-chain implementation of the exact method that DEXes use to calculate on-chain TWAP.
+
+Some Uniswap forks have made modifications to the on-chain TWAP calculation method originally made by Uniswap. In this app, the original Uniswap version and a well-known fork, Solidly, are implemented. 
+
+.. code-block:: javascript
+
+	getFusePrice: async function (w3, pairAddress, toBlock, seedBlock, abiStyle) {
+	    const getFusePriceUniV2 = async (w3, pairAddress, toBlock, seedBlock) => {
+	        ...
+	    }
+	    const getFusePriceSolidly = async (w3, pairAddress, toBlock, seedBlock) => {
+	        ...
+	    }
+	    const GET_FUSE_PRICE_FUNCTIONS = {
+	        UniV2: getFusePriceUniV2,
+	        Solidly: getFusePriceSolidly,
+	    }
+
+	    return GET_FUSE_PRICE_FUNCTIONS[abiStyle](w3, pairAddress, toBlock, seedBlock)
+	},
+
+In this doc, only the original Uniswap implementation is explained. To calculate the long-term average, we make use of the two variables ``price0CumulativeLast`` & ``price1CumulativeLast`` that are available on the pair contract for on-chain TWAP calculations.
+
+.. code-block:: javascript
+
+	const getFusePriceUniV2 = async (w3, pairAddress, toBlock, seedBlock) => {
+	     ...
+	}
+
+Here is the method that Uniswap has proposed for calculating time-weighted average called V2 solution:
+
+.. image::
 
