@@ -3,6 +3,7 @@
 # -- Project information
 
 project = 'Muon'
+.. image:: `https://assets.website-files.com/614c6fa0cc868403c37c5e53/614c6fa0cc8684353e7c5e63_muon-logo.svg`
 project_copyright = '2021, Graziella'
 author = 'Graziella'
 
