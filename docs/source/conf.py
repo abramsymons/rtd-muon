@@ -3,7 +3,7 @@
 # -- Project information
 
 project = 'Muon'
-copyright = '2021, Graziella'
+project_copyright = '2021, Graziella'
 author = 'Graziella'
 
 release = '0.1'
