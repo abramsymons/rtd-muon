@@ -245,3 +245,9 @@ Here is the method that Uniswap has proposed for calculating time-weighted avera
 .. image:: https://docs.uniswap.org/assets/images/v2_twap-fdc82ab82856196510db6b421cce9204.png
     :alt: Time Weighted Average
 
+Each time the price changes, it multiplies the previous price by the time period during which that price is valid as the weight of the price. The summation of the results are accumulated in the ``priceCumulativeLast``  which is divided by the total time period resulting in the time-weighted average. Uniswap stores and provides the necessary data for this calculation.
+
+The following diagram illustrates how this process works. To get more information, see `here <https://docs.uniswap.org/protocol/V2/concepts/core-concepts/oracles>`_.
+
+.. image:: https://docs.uniswap.org/assets/images/v2_onchain_price_data-c051ebca6a5882e3f2ad758fa46cbf5e.png
+    :alt: Storing Cumulative Price
