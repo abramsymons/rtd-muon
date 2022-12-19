@@ -242,6 +242,6 @@ In this doc, only the original Uniswap implementation is explained. To calculate
 
 Here is the method that Uniswap has proposed for calculating time-weighted average called V2 solution:
 
-.. image::
+.. image:: https://docs.uniswap.org/assets/images/v2_twap-fdc82ab82856196510db6b421cce9204.png
+    :alt: Time Weighted Average
 
-`TWAP <https://docs.uniswap.org/assets/images/v2_twap-fdc82ab82856196510db6b421cce9204.png>`_
