@@ -244,3 +244,4 @@ Here is the method that Uniswap has proposed for calculating time-weighted avera
 
 .. image::
 
+<https://docs.uniswap.org/assets/images/v2_twap-fdc82ab82856196510db6b421cce9204.png>
