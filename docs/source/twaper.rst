@@ -321,7 +321,7 @@ All the procedures explained above in a step-by-step manner can now be reviewed 
 	},
 
 *************************************
-Section 2: Calculating TWAP of Routes
+Calculating TWAP of Routes
 *************************************
 
 Very often, the dollar-based price of a token cannot be obtained from a pair because many of the important pairs do not contain stablecoins; that is, both tokens are volatile. For instance, on mainnet, numerous pools with large liquidity for many tokens have WETH as their counterpart. The same goes for tokens on other chains and their native tokens. That is why to get the dollar-based price of a token, we usually need to calculate the price of a route of pairs. 
