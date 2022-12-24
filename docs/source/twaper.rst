@@ -427,7 +427,7 @@ The ``ConfigFactory`` has a method called ``deployConfig`` that enables users to
             return this.formatRoutes(configMetaData)
     },
     
-    ***********************************
-    Calculating the TWAP of an LP Token
-    ***********************************
+ *********************************** 
+ Calculating the TWAP of an LP Token
+ ***********************************
     
