@@ -331,3 +331,33 @@ Calculating TWAP of Routes
 Very often, the dollar-based price of a token cannot be obtained from a pair because many of the important pairs do not contain stablecoins; that is, both tokens are volatile. For instance, on mainnet, numerous pools with large liquidity for many tokens have WETH as their counterpart. The same goes for tokens on other chains and their native tokens. That is why to get the dollar-based price of a token, we usually need to calculate the price of a route of pairs. 
 
 Imagine there is a pair between token A and WETH, and the price of A is 0.02 in terms of WETH. There is also a pair between WETH and USDC, and the price of WETH is, for example, 1,500 in terms of USDC. Therefore, we can get the price of A in terms of USDC by multiplying the prices of the two pairs in the route, which comes to $30.  
+
+Our price feed app, TWAPER, makes use of the module explained in section 1 to calculate the price of a pair. 
+
+.. code-block:: javascript
+
+    module.exports = {
+        ...Pair,
+
+        APP_NAME: 'twaper',
+        ...
+    },
+
+Calculating Prices of Routes
+============================
+
+To calculate the TWAP of a route, the prices of pairs forming it should be calculated. 
+Instead of calculating the price for each pair separately, we obtain all the prices for the pairs of all routes asynchronously through ``Promise``.
+
+
+.. code-block:: javascript
+
+    const promises = []
+    for (let [i, route] of routes.entries()) {
+        for (let pair of route.path) {
+            promises.push(this.getTokenPairPrice(route.chainId, route.abiStyle, pair, toBlocks[route.chainId]))
+        }
+    }
+
+    let result = await Promise.all(promises)
+
