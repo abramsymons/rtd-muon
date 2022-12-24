@@ -361,3 +361,63 @@ Instead of calculating the price for each pair separately, we obtain all the pri
 
     let result = await Promise.all(promises)
 
+At this stage, the TWAP of a route is calculated by multiplying the prices of pairs together.
+
+.. code-block:: javascript
+
+    let price = Q112
+    ...
+    for (let pair of route.path) {
+        price = price.mul(result[0].tokenPairPrice).div(Q112)
+        ...
+    }
+
+Now that the price of a token for one single route is calculated, we can calculate the  time weighted price average for different routes based on the weights read from ``config``, which will be described in the next section. These routes may be on one exchange or different exchanges on one chain or even different exchanges on different chains.
+
+.. code-block:: javascript
+
+    calculatePrice: async function (validPriceGap, routes, toBlocks) {
+        let sumTokenPrice = new BN(0)
+        let sumWeights = new BN(0)
+        let prices = []
+        const removedPrices = []
+        ...
+        for (let route of routes) {
+            let price = Q112
+            ...
+            for (let pair of route.path) {
+                price = price.mul(result[0].tokenPairPrice).div(Q112)
+                routeRemovedPrices.push(result[0].removed)
+                result = result.slice(1)
+            }
+
+            sumTokenPrice = sumTokenPrice.add(price.mul(new BN(route.weight)))
+            sumWeights = sumWeights.add(new BN(route.weight))
+            prices.push(price)
+            removedPrices.push(routeRemovedPrices)
+        }
+        ...
+        return { price: sumTokenPrice.div(sumWeights), removedPrices }
+    },
+
+When there are several routes and there is a big difference between the obtained maximum and minimum prices, we have implemented another fuse mechanism to stop the system.
+
+.. code-block:: javascript
+
+    if (prices.length > 1) {
+        let [minPrice, maxPrice] = [BN.min(...prices), BN.max(...prices)]
+        if (!this.isPriceToleranceOk(maxPrice, minPrice, validPriceGap).isOk)
+            throw { message: `High price gap between route prices (${minPrice}, ${maxPrice})` }
+    }
+    
+    
+Loading the Configuration
+=========================
+
+There is a question of where and how the required configurations for the price calculation is obtained; configurations such as which routes are used and which pairs are the routes composed of. To define the required configuration, the ``ConfigFactory`` smart contract is used. The ``ConfigFactory`` generates a contract which should be fed the necessary parameters. 
+
+For more detailed information about ``ConfigFactory`` see `here <https://github.com/smrm-dev/twaper/blob/develop/hardhat/README.md>`_. The verified deployment of this contract on Fantom can be seen `here <https://ftmscan.com/address/0xf1febd6e744e985a2024e7223da61c670fcf1233#code>`_.
+
+The ``ConfigFactory`` has a method called ``deployConfig`` that enables users to deploy new ``Config`` instances for their tokens’ configurations. Each ``Config`` has ``a setter`` and a ``validPriceGap``  that defines the maximum allowed price difference between the routes. The ``Config`` contract has an ``addRoute`` method that enables the ``setter`` to add a route to the ``Config``. A route has a chain ID, a dex, a weight, and a list of pairs. Each pair has a specified period for average calculation, a long-term period and an accepted tolerance for the fuse mechanism, and a ``reverse`` flag that specifies whether to use the price of ``token0`` or ``token1`` of the pair. Every ``config`` deployment has an address that our app uses to load the required configuration from by calling ``getRoutes`` function.
+
+
