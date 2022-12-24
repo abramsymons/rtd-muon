@@ -7,13 +7,17 @@ This is a technical document describing how a price feed app is developed using 
   - Calculating the TWAP of a normal ERC-20 token
   - Calculating the TWAP of an LP token
 
-This document is made up of three sections: 
+This document is made up of four sections: 
 
-   1- In the first section, we describe how a module is developed to calculate Time Weighted Average Price (TWAP) of a pair of tokens based on the information it gets from a Uniswap pool or one of its forks. 
-   
-   2- In this section, we explain how to use the module from section one to obtain a token’s price from routes made of pairs that end with a stablecoin. These routes can be in different exchanges on different chains.
-   
-   3- In section 3, we demonstrate how the price of an LP token is calculated using the procedure in section 2.  
+  1- In the first section, we describe how a module is developed to calculate Time Weighted Average Price (TWAP) of a pair of tokens based on the information it gets from a Uniswap pool or one of its forks.
+
+  2- In this section, we explain how to use the module from section one to obtain a token’s price from routes made of pairs that end with a stablecoin. These routes can be in different exchanges on different chains.
+
+  3- In section 3, we demonstrate how the TWAP of an LP token is calculated using the procedure in section 2.  
+
+  4- This section explains how a request is processed by the app.
+
+NB: Throughout this document, pair price refers to the price of one token in terms of the other.
 
 **************************
 Calculating TWAP of a Pair
