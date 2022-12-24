@@ -420,4 +420,14 @@ For more detailed information about ``ConfigFactory`` see `here <https://github.
 
 The ``ConfigFactory`` has a method called ``deployConfig`` that enables users to deploy new ``Config`` instances for their tokens’ configurations. Each ``Config`` has ``a setter`` and a ``validPriceGap``  that defines the maximum allowed price difference between the routes. The ``Config`` contract has an ``addRoute`` method that enables the ``setter`` to add a route to the ``Config``. A route has a chain ID, a dex, a weight, and a list of pairs. Each pair has a specified period for average calculation, a long-term period and an accepted tolerance for the fuse mechanism, and a ``reverse`` flag that specifies whether to use the price of ``token0`` or ``token1`` of the pair. Every ``config`` deployment has an address that our app uses to load the required configuration from by calling ``getRoutes`` function.
 
+.. code-block::
 
+    getRoutes: async function (config) {
+            let configMetaData = await ethCall(config, 'getRoutes', [], CONFIG_ABI, CHAINS.fantom)
+            return this.formatRoutes(configMetaData)
+    },
+    
+    ***********************************
+    Calculating the TWAP of an LP Token
+    ***********************************
+    
