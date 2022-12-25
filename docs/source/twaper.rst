@@ -2,6 +2,10 @@
 TWAPER (Price Feed App)
 #######################
 
+...
+This formula $\frac{1}{\sqrt{x}}$ is an example.
+...
+
 This is a technical document describing how a price feed app is developed using Muon. This app has two capabilities:
 
   - Calculating the TWAP of a normal ERC-20 token
