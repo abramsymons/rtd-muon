@@ -9,6 +9,13 @@ Functions
 onRequest
 =========
 
+.. math::
+    DividendYield &= \frac{DVT(t)}{CurrentMarketCap} \\
+    Avg_Assets &= \biggl( A/B \biggr) \textrm { when B is not zero...} \\
+    Avg \_ Assets &= \biggl(\frac{A}{B}\biggr) \textrm{ when B is not zero...}
+
+.. 
+
 It is the most important function that every app should implement. This function receives the request as an argument, fetches required data from external sources, does any necessary processing and returns any data needed to be fed to the smart contract. `request` has different attributes. 
 
 .. code-block:: javascript
