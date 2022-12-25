@@ -9,11 +9,6 @@ Functions
 onRequest
 =========
 
-.. math::
-    
-    \sqrt{9}
-.. 
-
 It is the most important function that every app should implement. This function receives the request as an argument, fetches required data from external sources, does any necessary processing and returns any data needed to be fed to the smart contract. `request` has different attributes. 
 
 .. code-block:: javascript
