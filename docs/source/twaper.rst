@@ -575,8 +575,8 @@ Because routes are on different chains and are assigned to different ``toBlocks`
         return Math.min(...timestamps)
     },
 
-Method: lp_price
-================
+Method: ``lp_price``
+====================
 
 If the method is ``lp_price``, the function ``getLpMetaData`` is called to obtain the ``chainId``, ``pair``, ``config0`` & ``config1``. 
 
