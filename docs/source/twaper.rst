@@ -460,3 +460,71 @@ By using ``Promise`` and ``calculatePrice``, values for ``price0`` and ``price1`
 	},
 
 Like regular tokens, LP tokens have a config that includes routes for ``token0`` and ``token1``. The config is obtained by calling ``getMetaData`` function from the ``LpConfig`` contract. To deploy ``LpConfig``, the function ``deployLpConfig`` is called from ``ConfigFactory``. See the details in this `Readme <https://github.com/smrm-dev/twaper/blob/develop/hardhat/README.md>`_.
+
+********************
+Handling the Request
+********************
+
+Now that all the different components of the app have been explained in a step-by-step manner, it is time to review the implementation of the ``onRequest`` function that is the entry point of requests to the app.
+
+The first action is to determine which method - ``price`` or ``lp_price`` - is to be used. Regardless of the method, the two parameters should be sent to the app: the contract address from which the ``config`` loads, and the ``toBlocks`` for which the average is to be calculated.
+
+.. code-block:: javascript
+
+	onRequest: async function (request) {
+	    let {
+	        method,
+	        data: { params }
+	    } = request
+
+	    switch (method) {
+	        case 'price':
+
+	            let { config, toBlocks } = params
+	            ...
+
+	        case 'lp_price': {
+	            let { config, toBlocks } = params
+	            ...
+	        }
+
+	        default:
+	            throw { message: `Unknown method ${params}` }
+	    }
+	},
+
+The ``toBlocks`` parameter is optional and if it is not sent to the app, it means the price for the current block should be calculated.
+
+.. code-block:: javascript
+
+	// prepare toBlocks 
+	if (!toBlocks) {
+	    if (!request.data.result)
+	        toBlocks = await this.prepareToBlocks(chainIds)
+	    else
+	        toBlocks = request.data.result.toBlocks
+	}
+	else toBlocks = JSON.parse(toBlocks)
+
+However, as the latest block may be reorged and we need to assure all nodes are using the same block, we apply a number of blocks for confirmation; that is, rather than assigning the current block to the toBlock, a block that is a few blocks before the current one is assigned.  
+
+.. code-block:: javascript
+
+	getReliableBlock: async function (chainId) {
+	    const latestBlock = await ethGetBlockNumber(chainId)
+	    const reliableBlock = latestBlock - blocksToAvoidReorg[chainId]
+	    return reliableBlock
+	},
+
+	prepareToBlocks: async function (chainIds) {
+	    const toBlocks = {}
+	    for (let chainId of chainIds) {
+	        // consider a few blocks before the current block as toBlock to avoid reorg
+	        toBlocks[chainId] = await this.getReliableBlock(chainId)
+	    }
+
+	    return toBlocks
+	},
+
+Method: ``price``
+=================
