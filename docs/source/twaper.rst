@@ -528,3 +528,17 @@ However, as the latest block may be reorged and we need to assure all nodes are 
 
 Method: ``price``
 =================
+
+If the method is ``price``, the function ``getRoutes`` is called to obtain ``routes`` & ``chainIds``.
+
+.. code-block:: javascript
+
+    const { routes, chainIds } = await this.getRoutes(config)
+    
+With ``routes`` and ``toBlocks``, the price average of different routes are calculated using calculatePrice, as explained above. 
+
+.. code-block:: javascript
+
+    const { price, removedPrices } = await this.calculatePrice(routes.validPriceGap, routes.routes, toBlocks)
+
+
