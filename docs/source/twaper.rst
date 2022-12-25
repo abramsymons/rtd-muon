@@ -2,9 +2,6 @@
 TWAPER (Price Feed App)
 #######################
 
-...
-This formula $\frac{1}{\sqrt{x}}$ is an example.
-...
 
 This is a technical document describing how a price feed app is developed using Muon. This app has two capabilities:
 
@@ -437,8 +434,9 @@ Calculating the TWAP of an LP Token
 
 The TWAPER makes use of the following formula to calculate the TWAP of an LP token.
 
-.. image:: https://github.com/abramsymons/rtd-muon/issues/2#issue-1510289003
-    :alt: LP Formula
+.. math:: 
+
+    p_lp = 2\sqrtp_0
 
 In the formula, p0 and p1 are the fair prices of the two tokens that the LP represents and are obtained in the method described in section 2; K is a constant that is the result of multiplying the reserves of the two tokens and L is the LP’s total supply. The values for K and L are obtained from the LP’s contract. To see the details of this formula, see `Pricing LP Tokens <https://cmichel.io/pricing-lp-tokens/>`_.
 
