@@ -541,4 +541,73 @@ With ``routes`` and ``toBlocks``, the price average of different routes are calc
 
     const { price, removedPrices } = await this.calculatePrice(routes.validPriceGap, routes.routes, toBlocks)
 
+Finally, the timestamp at which the price is calculated should be returned to the app. This enables the app to ensure that the price is not an expired one.
+
+.. code-block:: javascript
+
+    // get earliest block timestamp
+    const timestamp = await this.getEarliestBlockTimestamp(chainIds, toBlocks)
+
+    return {
+        config,
+        routes,
+        price: price.toString(),
+        removedPrices,
+        toBlocks,
+        timestamp
+    }
+
+Because routes are on different chains and are assigned to different ``toBlocks``, the earliest timestamp is returned.
+
+.. code-block:: javascript
+
+    getEarliestBlockTimestamp: async function (chainIds, toBlocks) {
+        const promises = []
+        for (const chainId of chainIds) {
+            promises.push(ethGetBlock(chainId, toBlocks[chainId]))
+        }
+
+        const blocks = await Promise.all(promises)
+        const timestamps = []
+        blocks.forEach((block) => {
+            timestamps.push(block.timestamp)
+        })
+        return Math.min(...timestamps)
+    },
+
+Method: lp_price
+================
+
+If the method is ``lp_price``, the function ``getLpMetaData`` is called to obtain the ``chainId``, ``pair``, ``config0`` & ``config1``. 
+
+.. code-block:: javascript
+
+    let { chainId, pair, config0, config1 } = await this.getLpMetaData(config)
+
+The variables ``config0`` & ``config1`` should be changed to ``routes0`` & ``routes1`` as follows so that they can be used by ``calculateLpPrice``.
+
+.. code-block:: javascript
+
+    let { routes: routes0, chainIds: chainIds0 } = this.formatRoutes(config0)
+    let { routes: routes1, chainIds: chainIds1 } = this.formatRoutes(config1)
+
+Now that routes for ``token0`` and ``token``1 are obtained, the LP price can be calculated. 
+
+.. code-block:: javascript
+    
+    const price = await this.calculateLpPrice(chainId, pair, routes0, routes1, toBlocks)
+
+Here, the same points apply to the timestamp as the other method except for the ``return`` values, as shown below: 
+
+    // get earliest block timestamp
+    const timestamp = await this.getEarliestBlockTimestamp(chainIds, toBlocks)
+
+.. code-block:: javascript
+
+    return {
+        config,
+        price: price.toString(),
+        toBlocks,
+        timestamp
+    }
 
