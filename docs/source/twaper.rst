@@ -430,3 +430,31 @@ The ``ConfigFactory`` has a method called ``deployConfig`` that enables users to
 ***********************************
 Calculating the TWAP of an LP Token
 ***********************************
+
+The TWAPER makes use of the following formula to calculate the TWAP of an LP token.
+
+$$ p_{lp} = {2\sqrt{p_0p_1K} \over L}. $$
+
+In the formula, p0 and p1 are the fair prices of the two tokens that the LP represents and are obtained in the method described in section 2; K is a constant that is the result of multiplying the reserves of the two tokens and L is the LP’s total supply. The values for K and L are obtained from the LP’s contract. To see the details of this formula, see `Pricing LP Tokens <https://cmichel.io/pricing-lp-tokens/>`_.
+
+By using ``Promise`` and ``calculatePrice``, values for ``price0`` and ``price1`` are calculated simultaneously. ``K`` and ``totalSupply`` (L) are read from the LP’s smart contract. Having obtained these values, the TWAPER can now calculate the TWAP of the LP.
+
+.. code-block:: javascript
+
+    calculateLpPrice: async function (chainId, pair, routes0, routes1, toBlocks) {
+	    // prepare promises for calculating each config price
+	    const promises = [
+	        this.calculatePrice(routes0.validPriceGap, routes0.routes, toBlocks),
+	        this.calculatePrice(routes1.validPriceGap, routes1.routes, toBlocks)
+	    ]
+
+	    let [price0, price1] = await Promise.all(promises)
+	    const { K, totalSupply } = await this.getLpTotalSupply(pair, chainId, toBlocks[chainId])
+
+	    // calculate lp token price based on price0 & price1 & K & totalSupply
+	    const numerator = new BN(2).mul(new BN(BigInt(Math.sqrt(price0.price.mul(price1.price).mul(K)))))
+	    const price = numerator.div(totalSupply)
+	    return price
+	},
+
+Like regular tokens, LP tokens have a config that includes routes for ``token0`` and ``token1``. The config is obtained by calling ``getMetaData`` function from the ``LpConfig`` contract. To deploy ``LpConfig``, the function ``deployLpConfig`` is called from ``ConfigFactory``. See the details in this `Readme <https://github.com/smrm-dev/twaper/blob/develop/hardhat/README.md>`_.
