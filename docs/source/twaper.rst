@@ -2,11 +2,6 @@
 TWAPER (Price Feed App)
 #######################
 
-.. math::
-    
-    p_{lp} = {2\sqrt{p_0p_1K} \over L}
-..
-
 This is a technical document describing how a price feed app is developed using Muon. This app has two capabilities:
 
   - Calculating the TWAP of a normal ERC-20 token
@@ -438,8 +433,10 @@ Calculating the TWAP of an LP Token
 
 The TWAPER makes use of the following formula to calculate the TWAP of an LP token.
 
-.. image:: https://raw.githubusercontent.com/abramsymons/rtd-muon/main/docs/source/images/formula_1.jpeg
-    :alt: LP Token Formula
+.. math::
+    
+    p_{lp} = {2\sqrt{p_0p_1K} \over L}
+..
 
 In the formula, p0 and p1 are the fair prices of the two tokens that the LP represents and are obtained in the method described in section 2; K is a constant that is the result of multiplying the reserves of the two tokens and L is the LP’s total supply. The values for K and L are obtained from the LP’s contract. To see the details of this formula, see `Pricing LP Tokens <https://cmichel.io/pricing-lp-tokens/>`_.
 
