@@ -599,10 +599,10 @@ Now that routes for ``token0`` and ``token``1 are obtained, the LP price can be 
 
 Here, the same points apply to the timestamp as the other method except for the ``return`` values, as shown below: 
 
+.. code-block:: javascript
+
     // get earliest block timestamp
     const timestamp = await this.getEarliestBlockTimestamp(chainIds, toBlocks)
-
-.. code-block:: javascript
 
     return {
         config,
