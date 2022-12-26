@@ -4,7 +4,7 @@ TWAPER (Price Feed App)
 
 .. math::
     
-    \sqrt{9}
+    p_{lp} = {2\sqrt{p_0p_1K} \over L}
 ..
 
 This is a technical document describing how a price feed app is developed using Muon. This app has two capabilities:
