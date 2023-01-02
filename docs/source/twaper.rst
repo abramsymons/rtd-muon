@@ -8,9 +8,7 @@ Twaper is a Muon app to get a token price from decentralized exchanges in a way 
 - In order to reject unexpected price changes, it applies a fuse mechanism that stops the system when a short duration average shows a large price volatility compared to a longer one.
 - It does not require periodic transactions to register checkpoints on-chain which are costly and hard to maintain.
 
-Twaper gets the price from different sources and returns their weighted average as result. Each source is defined by a route which is a list of pairs. A pair is the address of a liquidity pool on a dex which is the basic source of the price for a token. For example the MUON token price can be calculated using [MUON-WETH, WETH-USDC] route by multiplying the MUON price in WETH by the WETH price in USDC.
-
-This document describes how Twaper is developed as a Muon app. It is made up of four sections:
+This document describes how Twaper is developed, and is made up of four sections:
 
   1) In the first section, we describe how a module is developed to calculate TWAP of a pair of tokens based on the information it gets from a Uniswap pool or one of its forks.
 
