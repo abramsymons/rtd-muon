@@ -2,20 +2,23 @@
 TWAPER (Price Feed App)
 #######################
 
-This is a technical document describing how a price feed app is developed using Muon. This app has two capabilities:
+Twaper is a Muon app to get a token price from decentralized exchanges in a way that is secure against price manipulations. It uses the `Uniswap TWAP <https://uniswap.org/blog/uniswap-v3-oracles>`_ approach with the following extra benefits over the original on-chain implementation:
 
-  - Calculating the TWAP of a normal ERC-20 token
-  - Calculating the TWAP of an LP token
+- It detects and removes outlier prices before calculating averages to prevent price manipulations through applying a sharp rise/fall in the price for a short duration.
+- In order to reject unexpected price changes, it applies a fuse mechanism that stops the system when a short duration average shows a large price volatility compared to a longer one.
+- It does not require periodic transactions to register checkpoints on-chain which are costly and hard to maintain.
 
-This document is made up of four sections: 
+Twaper gets the price from different sources and returns their weighted average as result. Each source is defined by a route which is a list of pairs. A pair is the address of a liquidity pool on a dex which is the basic source of the price for a token. For example the MUON token price can be calculated using [MUON-WETH, WETH-USDC] route by multiplying the MUON price in WETH by the WETH price in USDC.
 
-  1- In the first section, we describe how a module is developed to calculate Time Weighted Average Price (TWAP) of a pair of tokens based on the information it gets from a Uniswap pool or one of its forks.
+This document describes how Twaper is developed as a Muon app. It is made up of four sections:
 
-  2- In this section, we explain how to use the module from section one to obtain a token’s price from routes made of pairs that end with a stablecoin. These routes can be in different exchanges on different chains.
+  1) In the first section, we describe how a module is developed to calculate TWAP of a pair of tokens based on the information it gets from a Uniswap pool or one of its forks.
 
-  3- In section 3, we demonstrate how the TWAP of an LP token is calculated using the procedure in section 2.  
+  2) In this section, we explain how to use the module from section one to obtain a token’s price from routes made of pairs that end with a stablecoin. These routes can be in different exchanges on different chains.
 
-  4- This section explains how a request is processed by the app.
+  3) In section 3, we demonstrate how the TWAP of an LP token is calculated using the procedure in section 2.  
+
+  4) This section explains how a request is processed by the app.
 
 NB: Throughout this document, pair price refers to the price of one token in terms of the other.
 
@@ -23,18 +26,10 @@ NB: Throughout this document, pair price refers to the price of one token in ter
 Calculating TWAP of a Pair
 **************************
 
-Our off-chain implementation of TWAP has the following benefits over the original on-chain TWAP of Uniswap.
-
-  - It detects and removes outlier prices before calculating averages to prevent price manipulations through applying a sharp rise/fall in the price for a short duration.
-  - In order to reject unexpected price changes, it applies a fuse mechanism that stops the system when a short duration average shows a large price volatility compared to a longer one.
-  - It does not require periodic transactions to register checkpoints on-chain which are costly and hard to maintain.
-
-Here is the technical details of how the module is implemented:
-
 Obtaining Price Changes
 =======================
 
-To calculate TWAP, a time period is defined with a source and a destination time. Also, the token prices for the defined period should be obtained from each block. It seems that the app needs to call ``getReserves`` for each block, calculate the price for the block by dividing ``_reserve1`` to ``_reserve0``, and calculate the average of all the prices. 
+To calculate TWAP for a pair, a time period is defined with a source and a destination time. Also, the token prices for the defined period should be obtained from each block. It seems that the app needs to call ``getReserves`` for each block, calculate the price for the block by dividing ``_reserve1`` to ``_reserve0``, and calculate the average of all the prices. 
 
 Following such an approach is a time-consuming and costly procedure because it requires numerous calls to the blockchain RPC endpoint. For instance, if we need the average for a 30-minute period for a network with 15-second blocks, there should be 120 calls of ``getReserves``. 
 
@@ -64,7 +59,8 @@ When there is more than one change in a block’s reserves, only the final shoul
 Listing the Price for Each Block
 ================================
 
-Now there is a list of all the blocks in which reserves have changed and the values of the reserves in those blocks for the defined time period. To calculate the TWAP, a list of prices is needed that shows the final price in each block. To generate this list, we require the initial reserve state in the seed block in addition to the list of reserves values. 
+Now t
+is a list of all the blocks in which reserves have changed and the values of the reserves in those blocks for the defined time period. To calculate the TWAP, a list of prices is needed that shows the final price in each block. To generate this list, we require the initial reserve state in the seed block in addition to the list of reserves values. 
 
 .. code-block:: javascript
 
