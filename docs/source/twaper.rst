@@ -411,7 +411,7 @@ There is a question of where and how the required configurations for the price c
 
 For more detailed information about ``ConfigFactory`` see `here <https://github.com/smrm-dev/twaper/blob/develop/hardhat/README.md>`_. The verified deployment of this contract on Fantom can be seen `here <https://ftmscan.com/address/0xf1febd6e744e985a2024e7223da61c670fcf1233#code>`_.
 
-The ``ConfigFactory`` has a method called ``deployConfig`` that enables users to deploy new ``Config`` instances for their tokens’ configurations. Each ``Config`` has ``a setter`` and a ``validPriceGap``  that defines the maximum allowed price difference between the routes. The ``Config`` contract has an ``addRoute`` method that enables the ``setter`` to add a route to the ``Config``. A route has a chain ID, a dex, a weight, and a list of pairs. Each pair has a specified period for average calculation, a long-term period and an accepted tolerance for the fuse mechanism, and a ``reverse`` flag that specifies whether to use the price of ``token0`` or ``token1`` of the pair. Every ``config`` deployment has an address that our app uses to load the required configuration from by calling ``getRoutes`` function.
+The ``ConfigFactory`` has a method called ``deployConfig`` that enables users to deploy new ``Config`` instances for their tokens’ configurations. Each ``Config`` has a ``setter`` and a ``validPriceGap``  that defines the maximum allowed price difference between the routes. The ``Config`` contract has an ``addRoute`` method that enables the ``setter`` to add a route to the ``Config``. A route has a chain ID, a dex, a weight, and a list of pairs. Each pair has a specified period for average calculation, a long-term period and an accepted tolerance for the fuse mechanism, and a ``reverse`` flag that specifies whether to use the price of ``token0`` or ``token1`` of the pair. Every ``config`` deployment has an address that our app uses to load the required configuration from by calling ``getRoutes`` function.
 
 .. code-block:: javascript
 
@@ -431,9 +431,9 @@ The TWAPER makes use of the following formula to calculate the TWAP of an LP tok
     p_{lp} = {2\sqrt{p_0p_1K} \over L}
 ..
 
-In the formula, p0 and p1 are the fair prices of the two tokens that the LP represents and are obtained in the method described in section 2; K is a constant that is the result of multiplying the reserves of the two tokens and L is the LP’s total supply. The values for K and L are obtained from the LP’s contract. To see the details of this formula, see `Pricing LP Tokens <https://cmichel.io/pricing-lp-tokens/>`_.
+In the formula, p0 and p1 are the fair prices of the two tokens that the LP represents and are obtained in the method described in section 2; K is a constant that is the result of multiplying the reserves of the two tokens and L is the LP’s total supply. The values for K and L are obtained from the LP’s contract. More details about this formula can be found in the `Pricing LP Tokens <https://cmichel.io/pricing-lp-tokens/>`_ article.
 
-By using ``Promise`` and ``calculatePrice``, values for ``price0`` and ``price1`` are calculated simultaneously. ``K`` and ``totalSupply`` (L) are read from the LP’s smart contract. Having obtained these values, the TWAPER can now calculate the TWAP of the LP.
+By using ``Promise`` and ``calculatePrice``, values for ``price0`` and ``price1`` are calculated simultaneously. ``K`` and ``L`` are read from the LP’s smart contract. Having obtained these values, the TWAPER can now calculate the TWAP of the LP.
 
 .. code-block:: javascript
 
@@ -453,13 +453,13 @@ By using ``Promise`` and ``calculatePrice``, values for ``price0`` and ``price1`
 	    return price
 	},
 
-Like regular tokens, LP tokens have a config that includes routes for ``token0`` and ``token1``. The config is obtained by calling ``getMetaData`` function from the ``LpConfig`` contract. To deploy ``LpConfig``, the function ``deployLpConfig`` is called from ``ConfigFactory``. See the details in this `Readme <https://github.com/smrm-dev/twaper/blob/develop/hardhat/README.md>`_.
+Like regular tokens, LP tokens have a config that includes routes for ``token0`` and ``token1``. The config is obtained by calling ``getMetaData`` function from the ``LpConfig`` contract. To deploy ``LpConfig``, the function ``deployLpConfig`` is called from ``ConfigFactory``. More details can be found  `here <https://github.com/smrm-dev/twaper/blob/develop/hardhat/README.md>`_.
 
 ********************
 Handling the Request
 ********************
 
-Now that all the different components of the app have been explained in a step-by-step manner, it is time to review the implementation of the ``onRequest`` function that is the entry point of requests to the app.
+Now that all the different components of the app have been explained in a step-by-step manner, it is time to review the implementation of the ``onRequest`` function that is the entry point of requests to the Muon app.
 
 The first action is to determine which method - ``price`` or ``lp_price`` - is to be used. Regardless of the method, the two parameters should be sent to the app: the contract address from which the ``config`` loads, and the ``toBlocks`` for which the average is to be calculated.
 
