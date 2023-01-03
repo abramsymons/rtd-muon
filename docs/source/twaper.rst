@@ -2,7 +2,7 @@
 TWAPER (Price Feed App)
 #######################
 
-Twaper is a Muon app to get a token price from decentralized exchanges in a way that is secure against price manipulations. It uses the `Uniswap TWAP <https://uniswap.org/blog/uniswap-v3-oracles>`_ approach with the following extra benefits over the original on-chain implementation:
+`Twaper <https://github.com/smrm-dev/twaper/>`_ is a Muon app to get a token price from decentralized exchanges in a way that is secure against price manipulations. It uses the `Uniswap TWAP <https://uniswap.org/blog/uniswap-v3-oracles>`_ approach with the following extra benefits over the original on-chain implementation:
 
 - It detects and removes outlier prices before calculating averages to prevent price manipulations through applying a sharp rise/fall in the price for a short duration.
 - In order to reject unexpected price changes, it applies a fuse mechanism that stops the system when a short duration average shows a large price volatility compared to a longer one.
@@ -27,7 +27,7 @@ Calculating TWAP of a Pair
 Obtaining Price Changes
 =======================
 
-To calculate TWAP for a pair, a time period is defined with a source and a destination time. Also, the token prices for the defined period should be obtained from each block. It seems that the app needs to call ``getReserves`` for each block, calculate the price for the block by dividing ``_reserve1`` to ``_reserve0``, and calculate the average of all the prices. 
+To calculate Time Weighted Average Price for a pair in a time period, the token prices should be obtained for each block in the period. One approach might be to call ``getReserves`` for each block, calculate the price for the block by dividing ``_reserve1`` to ``_reserve0``, and calculate the average of all the prices. 
 
 Following such an approach is a time-consuming and costly procedure because it requires numerous calls to the blockchain RPC endpoint. For instance, if we need the average for a 30-minute period for a network with 15-second blocks, there should be 120 calls of ``getReserves``. 
 
@@ -57,8 +57,7 @@ When there is more than one change in a block’s reserves, only the final shoul
 Listing the Price for Each Block
 ================================
 
-Now t
-is a list of all the blocks in which reserves have changed and the values of the reserves in those blocks for the defined time period. To calculate the TWAP, a list of prices is needed that shows the final price in each block. To generate this list, we require the initial reserve state in the seed block in addition to the list of reserves values. 
+Now there is a list of all the blocks in which reserves have changed and the values of the reserves in those blocks for the defined time period. To calculate the TWAP, a list of prices is needed that shows the final price in each block. To generate this list, we require the initial reserve state in the seed block in addition to the list of reserves values. 
 
 .. code-block:: javascript
 
